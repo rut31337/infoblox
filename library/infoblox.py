@@ -83,8 +83,6 @@ infoblox_password:
 
 '''
 
-
-
 import re
 import requests
 import json
@@ -217,7 +215,7 @@ class Infoblox(object):
                            ip_v4 = r_json['ips'][i]
                            response = os.system("ping -c 1 -w2 " + ip_v4 + " > /dev/null 2>&1")
                            if response != 0:
-                              print ip_v4,'free and down'   
+                              #print ip_v4,'free and down'   
                               return ip_v4
                     else:
                         if 'text' in r_json:
@@ -248,7 +246,7 @@ class Infoblox(object):
 	    #ipv4addr = 'func:nextavailableip:' + address
 	    ipv4addr =  self.get_next_available_ip(address)
             ipv4addr = str(ipv4addr) 
-            print ipv4addr
+            #print ipv4addr
 	else:
 	    if re.match("^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$", address):
 		ipv4addr = address
@@ -271,6 +269,7 @@ class Infoblox(object):
 	    raise Exception(r)
 	except Exception:
 	    raise
+        return ipv4addr
     def delete_host_record(self, fqdn):
 	""" Implements IBA REST API call to delete IBA host record
 	:param fqdn: hostname in FQDN
@@ -328,15 +327,14 @@ def main():
     address = module.params['address']
     infbl = Infoblox(module.params['iba_ipaddr'], module.params['iba_user'], module.params['iba_password'], module.params['iba_wapi_version'], module.params['iba_dns_view'], module.params['iba_network_view'], module.params['iba_verify_ssl']);
     if state == 'absent':
-        infbl.create_host_record(address,fqdn)
+        ipaddr = infbl.create_host_record(address,fqdn)
+        module.exit_json(changed=True, msg="IP is '%s'" % ipaddr, ip_addr='%s' % ipaddr)
     elif state == 'present':
-    	 infbl.delete_host_record(fqdn)
+        infbl.delete_host_record(fqdn)
+        module.exit_json(changed=True, msg="Host '%s' deleted." % fqdn)
     else:
         module.fail_json(msg="The state must be 'absent' or 'present' but instead we found '%s'" % (state))
-
 
 # import module snippets
 from ansible.module_utils.basic import *
 main()
-
-

@@ -6,7 +6,7 @@
   local_action: >
     infoblox
     fqdn="{{ target_fqdn }}"
-    address="{{ target_ip }}"
+    address="{{ target_cidr }}"
     iba_ipaddr="{{ infoblox_gridmaster }}"
     iba_user="{{ infoblox_username }}"
     iba_password="{{ infoblox_password }}"
@@ -14,5 +14,5 @@
     iba_dns_view="{{ infoblox_view }}"
     iba_network_view="{{ infoblox_network_view }}"
     iba_verify_ssl="False"
-    state="present"
+    state="absent"
   ignore_errors: yes

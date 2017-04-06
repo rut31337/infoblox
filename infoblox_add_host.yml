@@ -12,8 +12,8 @@
     - name: "target_fqdn"
       prompt: "Target FQDN to Add"
       private: no
-    - name: "target_ip"
-      prompt: "Target IP"
+    - name: "target_cidr"
+      prompt: "Target CIDR network"
       private: no
   roles:
     - role: infoblox_add_host
